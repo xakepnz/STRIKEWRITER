@@ -30,6 +30,6 @@ Small issue with VirusTotal - currently working on this.
 
 <b>To-do:</b>
 
-Add more sites
-Add more error checking
-Multi thread for faster report
+Add more sites<br />
+Add more error checking<br />
+Multi thread for faster report<br />
