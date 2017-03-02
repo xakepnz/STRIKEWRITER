@@ -34,8 +34,8 @@ from netaddr import IPNetwork, IPAddress
 ######################################################################################
 #                                Edit these lines                                    #
 ######################################################################################
-abuseAPIKey = "wFFuHnVMSwdwfFhZZj4BcffbBlIuUartn3WKV3JK"                             #
-virusTotalAPIKey = "56db9b697823224253c0559558b91f0f294e8cf101b66f7ef1aed7897494cbc4"#
+abuseAPIKey = ""                                                                     #
+virusTotalAPIKey = ""                                                                #
 ######################################################################################
 
 os.system('clear')
