@@ -22,6 +22,7 @@ There are many sites that already offer this, however incorporating those sites,
 <b>Issues:</b>
 
 If it fails, it will mention you need to install the module, as it's not found. - sudo pip install module-name
+Small issue with VirusTotal - currently working on this.
 
 <b>To-do:</b>
 
