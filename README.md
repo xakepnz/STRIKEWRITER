@@ -21,7 +21,7 @@ There are many sites that already offer this, however incorporating those sites,
 
 <b>Issues:</b>
 
-If it fails, it will mention you need to install the module, as it's not found. - sudo pip install <module-name>
+If it fails, it will mention you need to install the module, as it's not found. - sudo pip install module-name
 
 <b>To-do:</b>
 
