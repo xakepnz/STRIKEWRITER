@@ -5,9 +5,13 @@
 <b>[+] Author:</b> xakep<br />
 <b>[+] Version:</b> 0.2.0<br />
 <b>[+] Date:</b> November 2016<br />
-<b>[+] Language:</b> Python<br />
+<b>[+] Language:</b> Python 2.*<br />
 <b>[+] OS:</b> Linux<br />
 <b>[+] Modules:</b> argparse, urllib, urllib2, requests, re, socket, netaddr<br />
+
+<b>Requirements:</b>
+
+You need an API Key from https://abuseipdb.com & https://www.virustotal.com
 
 <b>Help/Usage:</b>
 
