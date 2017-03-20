@@ -1,4 +1,4 @@
-#!/usr/bin/python
+!/usr/bin/python
 #
 # /#######                  /## /###### /#######
 #| ##__  ##                | ##|_  ##_/| ##__  ##
@@ -31,12 +31,12 @@ import socket
 import logging
 from netaddr import IPNetwork, IPAddress
 
-######################################################################################
-#                                Edit these lines                                    #
-######################################################################################
-abuseAPIKey = ""                                                                     #
-virusTotalAPIKey = ""                                                                #
-######################################################################################
+#######################################################################################
+#                                Edit these lines                                     #
+#######################################################################################
+abuseAPIKey = ""                                                                      #
+virusTotalAPIKey = ""                                                                 #
+#######################################################################################
 
 os.system('clear')
 parser = argparse.ArgumentParser(description="You shall not pass.")
@@ -89,7 +89,7 @@ time.sleep(1)
 update_progress_bar()
 
 abuseOut = requests.get("https://www.abuseipdb.com/check/" + ip + "/json?key=" + abuseAPIKey + "&days=30")
-time.sleep(1)
+time.sleep(2)
 update_progress_bar()
 
 if abuseOut.content == ("[]"):
@@ -116,7 +116,7 @@ except TypeError:
     virusOut = ("No Results.")
 virusPositiveResults = str(virusPositiveResults)
 virusTotalResults = str(virusTotalResults)
-time.sleep(1)
+time.sleep(2)
 update_progress_bar()
 
 threatCrowdOut = requests.get("https://www.threatcrowd.org/searchApi/v2/ip/report/?ip=" + ip)
@@ -128,22 +128,27 @@ time.sleep(1)
 update_progress_bar()
 
 ransomwareOut = requests.get("https://ransomwaretracker.abuse.ch/ip/" + ip + "/")
-
 if "not found in the Ransomware Tracker" in ransomwareOut.content:
     ransomwareOut = ("No Results.")
 elif "table below shows all Ransomware" in ransomwareOut.content:
     ransomwareOut = ("Found!")
+time.sleep(1)
+update_progress_bar()
 
 cymonOut = requests.get("https://cymon.io/" + ip)
 if "IP Not Found" in cymonOut.content:
     cymonOut = ("No Results.")
 elif "reported!" in cymonOut.content:
     cymonOut = ("Found!")
+time.sleep(1)
+update_progress_bar()
 
 ipInDetailOut = requests.get("http://ipindetail.com/ip-lookup/" + ip + ".html")
 if "GREEN" in ipInDetailOut.content:
     ipInDetailOut = ("No Results.")
 else: ipInDetailOut = ("Found!")
+time.sleep(1)
+update_progress_bar()
 
 d = datetime.date.today()
 month = ("%02d" % (d.month))
@@ -206,10 +211,10 @@ else:
     print ("")
     print ("Blacklist Information: ")
     print ("")
-    print ("[+] Cymon: " + cymonOut)
+#    print ("[+] Cymon: " + cymonOut)
     print ("[+] AbuseIPDB: " + abuseOut)
     print ("[+] IPInDetail: " + ipInDetailOut)
-    print ("[+] VirusTotal: " + virusOut + " - " + virusPositiveResults + "/" + virusTotalResults + " Total AV detection ratio")
+    print ("[+] VirusTotal: " + virusOut + " - " + virusPositiveResults + "/" + virusTotalResults + " Total AV detected")
     print ("[+] ThreatCrowd: " + threatCrowdOut)
     print ("[+] Ransomware Tracker: " + ransomwareOut)
     print ("")
