@@ -1,0 +1,254 @@
+#!/usr/bin/python
+
+import argparse, re, requests, socket, time, json, pprint
+from netaddr import IPNetwork, IPAddress
+
+######################################################################################################
+# API Keys: (Edit only the keys below).
+######################################################################################################
+
+ABUSEIPDBKEY = ''
+VIRUSTOTALKEY = ''
+IPINFOKEY = ''
+
+######################################################################################################
+# Virustotal Function:
+######################################################################################################
+
+def vt(ip):
+	try:
+		virus = False
+		virusresults = requests.get('https://www.virustotal.com/vtapi/v2/ip-address/report?apikey=' + VIRUSTOTALKEY + '&ip=' + ip)
+		binaryv = virusresults.content
+		binoutv = json.loads(binaryv)
+		if 'IP address found' in binoutv:
+			virusmsg = binout['verbose_msg']
+			virus = True
+		else:
+			virusmsg = 'N/A'
+		if virus == True:
+			print bcolors.FAIL,'\n[+] Virustotal: Found!',bcolors.ENDC
+			print bcolors.FAIL,'\n[+]  - Message: ' + virusmsg,bcolors.ENDC
+			print bcolors.FAIL,'[+] - Link: https://www.virustotal.com/' + ip + '\n',bcolors.ENDC
+		else:
+			print bcolors.OKGREEN,'[+] Virustotal: Not found.',bcolors.ENDC
+	except requests.ConnectionError:
+		print bcolors.FAIL,'\n[!] Could not connect to: https://www.virustotal.com!\n',bcolors.ENDC
+
+######################################################################################################
+# Feodo Tracker Function:
+######################################################################################################
+
+def feodoro(ip):
+	try:
+		feodo = False
+		feodoresults = requests.get('https://feodotracker.abuse.ch')
+		if ip in feodoresults.content:
+			pass
+		elif ip in feodoresults.content:
+			feodo = True
+		if feodo == True:
+			print bcolors.FAIL,'\n[+] Feodo Botnet Tracker: Found!',bcolors.ENDC
+			print bcolors.FAIL,'[+]  - Link: https://feodotracker.abuse.ch\n',bcolors.ENDC
+		else:
+			print bcolors.OKGREEN,'[+] Feodo Botnet Tracker: Not found.',bcolors.ENDC
+	except requests.ConnectionError:
+		print bcolors.FAIL,'\n[!] Could not connect to: https://feodotracker.abuse.ch!\n',bcolors.ENDC
+
+######################################################################################################
+# Threatcrowd Function:
+######################################################################################################
+
+def threatcrowds(ip):
+	try:
+		threat = False
+		threatcresults = requests.get("http://www.threatcrowd.org/searchApi/v2/ip/report/", params = {"ip": ip})
+		binaryt = threatcresults.content
+		binoutt = json.loads(binaryt)
+		response_code = binoutt['response_code']
+		if response_code == '1':
+			url = binoutt['permalink']
+			threat = True
+		else:
+			pass
+		if threat == True:
+			print bcolors.FAIL,'\n [+] Threatcrowd: Found!',bcolors.ENDC
+			print bcolors.FAIL,' [+]  - Link: ' + url + '\n',bcolors.ENDC
+		else:
+			print bcolors.OKGREEN,'[+] Threatcrowd: Not found.',bcolors.ENDC
+	except requests.ConnectionError:
+		print bcolors.FAIL,'\n[!] Could not connect to: https://www.threatcrowd.org!\n',bcolors.ENDC
+
+######################################################################################################
+# Cymon Function:
+######################################################################################################
+
+def cymonio(ip):
+	try:
+		cymon = False
+		cymonresults = requests.get('https://cymon.io/' + ip)
+		if 'IP Not Found' in cymonresults.content:
+			pass
+		elif 'reported!' in cymonresults.content:
+			cymon = True
+		if cymon == True:
+			print bcolors.FAIL,'\n[+] Cymon: Found!',bcolors.ENDC
+			print bcolors.FAIL,'[+] - Link: https://cymon.io/' + ip + '\n',bcolors.ENDC
+		else:
+			print bcolors.OKGREEN,'[+] Cymon: No Results.',bcolors.ENDC
+	except requests.ConnectionError:
+		print bcolors.FAIL,'\n[!] Could not connect to: https://cymon.io!\n',bcolors.ENDC
+
+######################################################################################################
+# Ransomeware Tracker Function:
+######################################################################################################
+
+def ransomware(ip):
+	try:
+		ransom = False
+		ransomresults = requests.get('https://ransomwaretracker.abuse.ch/ip/' + ip)
+		if 'not found in the Ransomware Tracker' in ransomresults.content:
+			pass
+		elif 'table below shows all Ransomware' in ransomresults.content:
+			ransom = True
+		if ransom == True:
+			print bcolors.FAIL,'[+] Ransomware Tracker: Found!',bcolors.ENDC
+			print bcolors.FAIL,'[+] - Link: https://ransomwaretracker.abuse.ch/ip/' + ip + '\n',bcolors.ENDC
+		else:
+			print bcolors.OKGREEN,'[+] Ransomware Tracker: No Results.',bcolors.ENDC
+	except requests.ConnectionError:
+		print bcolors.FAIL,'\n[!] Could not connect to: https://ransomwaretracker.abuse.ch!\n',bcolors.ENDC
+
+######################################################################################################
+# AbuseIPDB Function:
+######################################################################################################
+
+def abuseip(ip):
+	try:
+		abuse = False
+		abuseresults = requests.get('https://www.abuseipdb.com/check/' + ip + '/json?key=' + ABUSEIPDBKEY + '&days=30')
+		if abuseresults.content == ("[]"):
+			pass
+		else:
+			abuse = True
+		print bcolors.OKBLUE,'\n[*] Threat Information:\n',bcolors.ENDC
+		if abuse == True:
+			print bcolors.WARNING,'\n[+] AbuseIPDB: Found!',bcolors.ENDC
+			print bcolors.WARNING,'[+]  - Link: https://abuseipdb.com/check/' + ip + '\n',bcolors.ENDC
+		else:
+			print bcolors.OKGREEN,'[+] AbuseIPDB: No Results.',bcolors.ENDC
+	except requests.ConnectionError:
+		print bcolors.FAIL,'\n[!] Could not connect to: https://abuseipdb.com! (FYI: OSX Fails to connect). *mumbles* OpenSSL...\n',bcolors.ENDC
+
+######################################################################################################
+# IP Lookup function:
+######################################################################################################
+
+def iplookup(ip):
+	try:
+		r = requests.get('https://ipinfo.io/' + ip + '?token=' + IPINFOKEY)
+		binary = r.content
+		binout = json.loads(binary)
+		if 'hostname' in binout:
+			hostname = binout['hostname']
+		else:
+			hostname = 'N/A'
+		if 'org' in binout:
+			org = binout['org']
+		else:
+			org = 'N/A'
+		country = binout['country']
+		print bcolors.OKBLUE,'\n[*] IP Information:\n',bcolors.ENDC
+		print ' [+] IP: ' + ip
+		print ' [+] Hostname: ' + hostname
+		print ' [+] Provider: ' + org
+		print ' [+] Country: ' + country
+	except requests.ConnectionError:
+		print bcolors.FAIL,'[!] Could not connect to: https://ipinfo.io!',bcolors.ENDC
+
+######################################################################################################
+# Menu function:
+######################################################################################################
+
+def menu():
+	print bcolors.OKGREEN,'\n   /######  /######## /#######  /###### /##   /## /########',bcolors.ENDC
+	print bcolors.OKGREEN,'  /##__  ##|__  ##__/| ##__  ##|_  ##_/| ##  /##/| ##_____/',bcolors.ENDC
+	print bcolors.OKGREEN,' | ##  \__/   | ##   | ##  \ ##  | ##  | ## /##/ | ##      ',bcolors.ENDC
+	print bcolors.OKGREEN,' |  ######    | ##   | #######/  | ##  | #####/  | #####   ',bcolors.ENDC
+	print bcolors.OKGREEN,'  \____  ##   | ##   | ##__  ##  | ##  | ##  ##  | ##__/   ',bcolors.ENDC
+	print bcolors.OKGREEN,'  /##  \ ##   | ##   | ##  \ ##  | ##  | ##\  ## | ##      ',bcolors.ENDC
+	print bcolors.OKGREEN,' |  ######/   | ##   | ##  | ## /######| ## \  ##| ########',bcolors.ENDC
+	print bcolors.OKGREEN,'  \______/    |__/   |__/  |__/|______/|__/  \__/|________/\n',bcolors.ENDC
+	print bcolors.OKGREEN,'  /##      /## /#######  /###### /######## /######## /#######',bcolors.ENDC
+	print bcolors.OKGREEN,' | ##  /# | ##| ##__  ##|_  ##_/|__  ##__/| ##_____/| ##__  ##',bcolors.ENDC
+	print bcolors.OKGREEN,' | ## /###| ##| ##  \ ##  | ##     | ##   | ##      | ##  \ ##',bcolors.ENDC
+	print bcolors.OKGREEN,' | ##/## ## ##| #######/  | ##     | ##   | #####   | #######/',bcolors.ENDC
+	print bcolors.OKGREEN,' | ####_  ####| ##__  ##  | ##     | ##   | ##__/   | ##__  ##',bcolors.ENDC
+	print bcolors.OKGREEN,' | ###/ \  ###| ##  \ ##  | ##     | ##   | ##      | ##  \ ##',bcolors.ENDC
+	print bcolors.OKGREEN,' | ##/   \  ##| ##  | ## /######   | ##   | ########| ##  | ##',bcolors.ENDC
+	print bcolors.OKGREEN,' |__/     \__/|__/  |__/|______/   |__/   |________/|__/  |__/\n',bcolors.ENDC
+	print bcolors.OKBLUE,'        Link: https://github.com/xakepnz/STRIKEWRITER',bcolors.ENDC
+	print bcolors.OKGREEN,' -------------------------------------------------------------',bcolors.ENDC
+
+######################################################################################################
+# Main Function:
+######################################################################################################
+
+def main():
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-i","--ip", help="Input IPV4 Address.",required=True)
+	parser.add_argument("-v","--verbose", help="Verbose Output.",required=False, action="store_true")
+	args = parser.parse_args()
+	ip = args.ip
+	verb = args.verbose
+	menu()
+
+######################################################################################################
+# Error Checking:
+######################################################################################################
+
+	if re.match(r'^((\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$', ip):
+		pass
+	else:
+		print bcolors.FAIL,'\n[!] Error: Unknown Character Detected!\n',bcolors.ENDC
+		exit (0)
+	if IPAddress(ip) in IPNetwork('192.168.0.0/16'):
+		print bcolors.FAIL,'\n[!] Error: Private IP Detected!\n',bcolors.ENDC
+		exit (0)
+	elif IPAddress(ip) in IPNetwork('10.0.0.0/8'):
+		print bcolors.FAIL,'\n[!] Error: Private IP Detected!\n',bcolors.ENDC
+		exit (0)
+	elif IPAddress(ip) in IPNetwork('127.0.0.0/8'):
+		print bcolors.FAIL,'\n[!] Error: Private IP Detected!\n',bcolors.ENDC
+		exit (0)
+	elif IPAddress(ip) in IPNetwork('172.16.0.0/12'):
+		print bcolors.FAIL,'\n[!] Error: Private IP Detected!\n',bcolors.ENDC
+		exit (0)
+	else:
+		pass
+
+######################################################################################################
+# Call some functions:
+######################################################################################################
+
+	iplookup(ip)
+	abuseip(ip)
+	ransomware(ip)
+	cymonio(ip)
+	threatcrowds(ip)
+	feodoro(ip)
+	vt(ip)
+
+######################################################################################################
+# Start:
+######################################################################################################
+
+if __name__ == "__main__":
+	class bcolors:
+		OKBLUE = '\033[94m'
+		OKGREEN = '\033[92m'
+		WARNING = '\033[93m'
+		FAIL = '\033[91m'
+		ENDC = '\033[0m'
+		BOLD = '\033[1m'
+	main()
