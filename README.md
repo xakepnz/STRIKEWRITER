@@ -11,7 +11,9 @@ You need an API Key from https://abuseipdb.com & https://www.virustotal.com & ht
 
 <b>Install</b>
 
-<code>git clone</code>
+<code>git clone https://github.com/xakepnz/STRIKEWRITER.git</code><br />
+<code>cd STRIKEWRITER</code><br />
+<code>./strikewriter -i 1.2.3.4</code>
 
 <b>Description:</b>
 
