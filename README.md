@@ -6,13 +6,13 @@
 <b>[+] Author:</b> xakep<br />
 <b>[+] Language:</b> Python 2.*<br />
 <b>[+] OS:</b> Linux<br />
-<b>[+] Modules:</b>argparse, re, requests, socket, time, json, pprint, netaddr<br />
+<b>[+] Modules:</b> argparse, re, requests, socket, time, json, pprint, netaddr<br />
 
 ## Requirements:
 
-You need API Keys from https://abuseipdb.com & https://www.virustotal.com & https://ipinfo.io
+You need API Keys from: https://abuseipdb.com & https://www.virustotal.com & https://ipinfo.io
 
-## Install
+## Install:
 
 ```
 git clone https://github.com/xakepnz/STRIKEWRITER.git
