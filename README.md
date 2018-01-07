@@ -26,6 +26,10 @@ pip install -r requirements.txt
 ```
 
 ```
+chmod +x strikewriter
+```
+
+```
 ./strikewriter -i 1.2.3.4
 ```
 
