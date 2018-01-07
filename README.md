@@ -13,7 +13,7 @@ There are many sites that already offer this, however incorporating those sites,
 
 ## Requirements:
 
-You need API Keys from: https://abuseipdb.com & https://www.virustotal.com & https://ipinfo.io
+<b>_You need API Keys_</b> from: https://abuseipdb.com & https://www.virustotal.com & https://ipinfo.io
 
 ## Install:
 
