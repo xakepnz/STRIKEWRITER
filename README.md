@@ -1,12 +1,11 @@
 # STRIKEWRITER
 
-![alt text](https://i.imgur.com/97RTcVE.gif "Strikewriter")
-
 
 <b>[+] Author:</b> xakep<br />
 <b>[+] Language:</b> Python 2.*<br />
 <b>[+] OS:</b> Linux<br />
-<b>[+] Modules:</b> argparse, re, requests, socket, time, json, pprint, netaddr<br />
+
+![alt text](https://i.imgur.com/97RTcVE.gif "Strikewriter")
 
 ## Requirements:
 
