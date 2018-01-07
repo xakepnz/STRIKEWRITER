@@ -11,7 +11,7 @@ You need an API Key from https://abuseipdb.com & https://www.virustotal.com & ht
 
 <b>Install</b>
 
-git clone
+<code>git clone</code>
 
 <b>Description:</b>
 
