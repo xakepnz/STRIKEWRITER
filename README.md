@@ -5,21 +5,29 @@
 <b>[+] OS:</b> Linux<br />
 <b>[+] Modules:</b>argparse, re, requests, socket, time, json, pprint, netaddr<br />
 
-<b>Requirements:</b>
+## Requirements:
 
-You need an API Key from https://abuseipdb.com & https://www.virustotal.com & https://ipinfo.io
+You need API Keys from https://abuseipdb.com & https://www.virustotal.com & https://ipinfo.io
 
-<b>Install</b>
+## Install
 
 ```
 git clone https://github.com/xakepnz/STRIKEWRITER.git
 ```
 
-<code>cd STRIKEWRITER</code><br />
-<code>pip install -r requirements.txt</code><br />
-<code>./strikewriter -i 1.2.3.4</code><br />
+```
+cd STRIKEWRITER
+```
 
-<b>Description:</b>
+```
+pip install -r requirements.txt
+```
+
+```
+./strikewriter -i 1.2.3.4
+```
+
+## Description:
 
 This is a simple python script that takes a public IPV4 and searches against a few blacklist websites, to determine a reputation.
 There are many sites that already offer this, however incorporating those sites, into a fase CLI tool was the goal here.
