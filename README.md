@@ -1,4 +1,4 @@
-# BadIP.py
+# STRIKEWRITER
 
 <b>[+] Website:</b> https://intellipedia.ch<br />
 <b>[+] Name:</b> BadIP.py<br />
@@ -11,12 +11,11 @@
 
 <b>Requirements:</b>
 
-You need an API Key from https://abuseipdb.com & https://www.virustotal.com
+You need an API Key from https://abuseipdb.com & https://www.virustotal.com & https://ipinfo.io
 
-<b>Help/Usage:</b>
+<b>Install</b>
 
-python BadIP.py -h
-python BadIP.py -i 196.168.1.0 -v
+git clone
 
 <b>Description:</b>
 
