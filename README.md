@@ -13,7 +13,8 @@ There are many sites that already offer this, however incorporating those sites,
 
 ## Requirements:
 
-<b>_You need API Keys_</b> from: https://abuseipdb.com & https://www.virustotal.com & https://ipinfo.io
+[+] <b>_You need API Keys_</b> from: https://abuseipdb.com & https://www.virustotal.com & https://ipinfo.io<br />
+[+] Python dependencies (see below).
 
 ## Install:
 
