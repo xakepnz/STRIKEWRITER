@@ -18,21 +18,21 @@ There are many sites that already offer this, however incorporating those sites,
 ## Install:
 
 ```
-git clone https://github.com/xakepnz/STRIKEWRITER.git
+$ git clone https://github.com/xakepnz/STRIKEWRITER.git
 ```
 
 ```
-cd STRIKEWRITER
+$ cd STRIKEWRITER
 ```
 
 ```
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 ```
-chmod +x strikewriter
+$ chmod +x strikewriter
 ```
 
 ```
-./strikewriter -i 1.2.3.4
+$ ./strikewriter -i 1.2.3.4
 ```
