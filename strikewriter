@@ -133,8 +133,8 @@ def abuseip(ip):
 			abuse = True
 		print bcolors.OKBLUE,'\n[*] Threat Information:\n',bcolors.ENDC
 		if abuse == True:
-			print bcolors.WARNING,'\n[+] AbuseIPDB: Found!',bcolors.ENDC
-			print bcolors.WARNING,'[+]  - Link: https://abuseipdb.com/check/' + ip + '\n',bcolors.ENDC
+			print bcolors.FAIL,'\n[+] AbuseIPDB: Found!',bcolors.ENDC
+			print bcolors.FAIL,'[+]  - Link: https://abuseipdb.com/check/' + ip + '\n',bcolors.ENDC
 		else:
 			print bcolors.OKGREEN,'[+] AbuseIPDB: No Results.',bcolors.ENDC
 	except requests.ConnectionError:
