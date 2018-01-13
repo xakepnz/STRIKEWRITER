@@ -195,7 +195,7 @@ def menu():
 ######################################################################################################
 
 def main():
-        if ABUSEIPDBKEY and VIRUSTOTALKEY and IPINFOKEY == '':
+        if ABUSEIPDBKEY == '' and VIRUSTOTALKEY == '' and IPINFOKEY == '':
           print bcolors.FAIL,'[!] Error: No API Keys added.',bcolors.ENDC
           exit (0)
         else:
