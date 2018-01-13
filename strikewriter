@@ -251,4 +251,10 @@ if __name__ == "__main__":
 		FAIL = '\033[91m'
 		ENDC = '\033[0m'
 		BOLD = '\033[1m'
+        if ABUSEIPDBKEY and VIRUSTOTALKEY and IPINFOKEY == ''
+          print bcolors.FAIL,'[!] Error: No API Keys added.',bcolors.ENDC
+          exit (0)
+        else:
+          pass
+
 	main()
