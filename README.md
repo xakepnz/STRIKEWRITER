@@ -33,7 +33,12 @@ $ pip install -r requirements.txt
 ```
 $ chmod +x strikewriter
 ```
+
+```
+$ sudo cp strikewriter /bin/
+```
+
 ## Usage:
 ```
-$ ./strikewriter -i 123.123.123.123
+$ strikewriter -i 123.123.123.123
 ```
