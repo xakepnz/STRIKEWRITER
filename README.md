@@ -9,7 +9,7 @@ There are many sites that already offer this, however incorporating those sites,
 <b>[+] Language:</b> Python 2.*<br />
 <b>[+] OS:</b> Linux<br />
 
-![alt text](https://i.imgur.com/97RTcVE.gif "Strikewriter")
+![alt text](https://i.imgur.com/zqBN0f2.gif "Strikewriter")
 
 ## Requirements:
 
