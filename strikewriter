@@ -27,11 +27,13 @@ def vt(ip):
 		else:
 			virusmsg = 'N/A'
 		if virus == True:
-			print bcolors.FAIL,'\n[+] Virustotal: Found!',bcolors.ENDC
-			print bcolors.FAIL,'\n[+]  - Message: ' + virusmsg,bcolors.ENDC
-			print bcolors.FAIL,'[+] - Link: https://www.virustotal.com/' + ip + '\n',bcolors.ENDC
+			print bcolors.FAIL,'* *Virustotal:* +Found!+',bcolors.ENDC
+			print bcolors.FAIL,'\n* Message: ' + virusmsg,bcolors.ENDC
+			print bcolors.FAIL,'** Link: https://www.virustotal.com/' + ip,bcolors.ENDC
+			print bcolors.OKBLUE,'\n----',bcolors.ENDC
 		else:
-			print bcolors.OKGREEN,'[+] Virustotal: Not found.',bcolors.ENDC
+			print bcolors.OKGREEN,'* *Virustotal:* No Results.',bcolors.ENDC
+			print bcolors.OKBLUE,'\n----',bcolors.ENDC
 	except requests.ConnectionError:
 		print bcolors.FAIL,'\n[!] Could not connect to: https://www.virustotal.com!\n',bcolors.ENDC
 
@@ -48,10 +50,10 @@ def feodoro(ip):
 		elif ip in feodoresults.content:
 			feodo = True
 		if feodo == True:
-			print bcolors.FAIL,'\n[+] Feodo Botnet Tracker: Found!',bcolors.ENDC
-			print bcolors.FAIL,'[+]  - Link: https://feodotracker.abuse.ch\n',bcolors.ENDC
+			print bcolors.FAIL,'* *Feodo Botnet Tracker:* +Found!+',bcolors.ENDC
+			print bcolors.FAIL,'** Link: https://feodotracker.abuse.ch',bcolors.ENDC
 		else:
-			print bcolors.OKGREEN,'[+] Feodo Botnet Tracker: Not found.',bcolors.ENDC
+			print bcolors.OKGREEN,'* *Feodo Botnet Tracker:* No Results.',bcolors.ENDC
 	except requests.ConnectionError:
 		print bcolors.FAIL,'\n[!] Could not connect to: https://feodotracker.abuse.ch!\n',bcolors.ENDC
 
@@ -72,10 +74,10 @@ def threatcrowds(ip):
 		else:
 			pass
 		if threat == True:
-			print bcolors.FAIL,'\n [+] Threatcrowd: Found!',bcolors.ENDC
-			print bcolors.FAIL,' [+]  - Link: ' + url + '\n',bcolors.ENDC
+			print bcolors.FAIL,'* *Threatcrowd:* +Found!+',bcolors.ENDC
+			print bcolors.FAIL,'** Link: ' + url,bcolors.ENDC
 		else:
-			print bcolors.OKGREEN,'[+] Threatcrowd: Not found.',bcolors.ENDC
+			print bcolors.OKGREEN,'* *Threatcrowd:* No Results.',bcolors.ENDC
 	except requests.ConnectionError:
 		print bcolors.FAIL,'\n[!] Could not connect to: https://www.threatcrowd.org!\n',bcolors.ENDC
 
@@ -92,10 +94,10 @@ def cymonio(ip):
 		elif 'reported!' in cymonresults.content:
 			cymon = True
 		if cymon == True:
-			print bcolors.FAIL,'\n[+] Cymon: Found!',bcolors.ENDC
-			print bcolors.FAIL,'[+] - Link: https://cymon.io/' + ip + '\n',bcolors.ENDC
+			print bcolors.FAIL,'* *Cymon:* +Found!+',bcolors.ENDC
+			print bcolors.FAIL,'** Link: https://cymon.io/' + ip,bcolors.ENDC
 		else:
-			print bcolors.OKGREEN,'[+] Cymon: No Results.',bcolors.ENDC
+			print bcolors.OKGREEN,'* *Cymon:* No Results.',bcolors.ENDC
 	except requests.ConnectionError:
 		print bcolors.FAIL,'\n[!] Could not connect to: https://cymon.io!\n',bcolors.ENDC
 
@@ -112,10 +114,10 @@ def ransomware(ip):
 		elif 'table below shows all Ransomware' in ransomresults.content:
 			ransom = True
 		if ransom == True:
-			print bcolors.FAIL,'[+] Ransomware Tracker: Found!',bcolors.ENDC
-			print bcolors.FAIL,'[+] - Link: https://ransomwaretracker.abuse.ch/ip/' + ip + '\n',bcolors.ENDC
+			print bcolors.FAIL,'* *Ransomware Tracker:* +Found!+',bcolors.ENDC
+			print bcolors.FAIL,'** Link: https://ransomwaretracker.abuse.ch/ip/' + ip,bcolors.ENDC
 		else:
-			print bcolors.OKGREEN,'[+] Ransomware Tracker: No Results.',bcolors.ENDC
+			print bcolors.OKGREEN,'* *Ransomware Tracker:* No Results.',bcolors.ENDC
 	except requests.ConnectionError:
 		print bcolors.FAIL,'\n[!] Could not connect to: https://ransomwaretracker.abuse.ch!\n',bcolors.ENDC
 
@@ -131,12 +133,13 @@ def abuseip(ip):
 			pass
 		else:
 			abuse = True
-		print bcolors.OKBLUE,'\n[*] Threat Information:\n',bcolors.ENDC
+		print bcolors.OKBLUE,'\n----',bcolors.ENDC
+		print bcolors.OKBLUE,'\n*Threat Information:*\n',bcolors.ENDC
 		if abuse == True:
-			print bcolors.FAIL,'\n[+] AbuseIPDB: Found!',bcolors.ENDC
-			print bcolors.FAIL,'[+]  - Link: https://abuseipdb.com/check/' + ip + '\n',bcolors.ENDC
+			print bcolors.FAIL,'* *AbuseIPDB:* +Found!+',bcolors.ENDC
+			print bcolors.FAIL,'** Link: https://abuseipdb.com/check/' + ip,bcolors.ENDC
 		else:
-			print bcolors.OKGREEN,'[+] AbuseIPDB: No Results.',bcolors.ENDC
+			print bcolors.OKGREEN,'* *AbuseIPDB:* No Results.',bcolors.ENDC
 	except requests.ConnectionError:
 		print bcolors.FAIL,'\n[!] Could not connect to: https://abuseipdb.com! (FYI: OSX Fails to connect). *mumbles* OpenSSL...\n',bcolors.ENDC
 
@@ -158,11 +161,11 @@ def iplookup(ip):
 		else:
 			org = 'N/A'
 		country = binout['country']
-		print bcolors.OKBLUE,'\n[*] IP Information:\n',bcolors.ENDC
-		print ' [+] IP: ' + ip
-		print ' [+] Hostname: ' + hostname
-		print ' [+] Provider: ' + org
-		print ' [+] Country: ' + country
+		print bcolors.OKBLUE,'\n*IP Information:*\n',bcolors.ENDC
+		print '* *IP:* ' + ip
+		print '* *Hostname:* ' + hostname
+		print '* *Provider:* ' + org
+		print '* *Country:* ' + country
 	except requests.ConnectionError:
 		print bcolors.FAIL,'[!] Could not connect to: https://ipinfo.io!',bcolors.ENDC
 
