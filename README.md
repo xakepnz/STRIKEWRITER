@@ -33,6 +33,10 @@ $ pip install -r requirements.txt
 ```
 
 ```
+$ nano strikewriter # add in your API keys now
+```
+
+```
 $ chmod +x strikewriter
 ```
 
