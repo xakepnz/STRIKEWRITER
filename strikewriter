@@ -12,50 +12,308 @@ VIRUSTOTALKEY = ''
 IPINFOKEY = ''
 
 ######################################################################################################
+# Custom Parser:
+######################################################################################################
+
+def rex(chars, alert):
+
+	## CHARS
+
+	c0 = ""
+	c1 = ""
+	c2 = ""
+	c3 = ""
+	c4 = ""
+	c5 = ""
+	c6 = ""
+	c7 = ""
+	c8 = ""
+	c9 = ""
+	c10 = ""
+	c11 = ""
+	c12 = ""
+	c13 = ""
+	c14 = ""
+	c15 = ""
+	c16 = ""
+	c17 = ""
+	c18 = ""
+	c19 = ""
+	ec = ""
+
+	## CHECK SIZE
+
+	size = len(chars) - 1
+	if size >21:
+		print "Error 101 - Char overflow in parse buffer - exiting"
+		sys.exit()
+
+
+	## POPULATE CHARS	
+	x = 0
+
+	for char in chars:
+		if x == size:
+			ec = char
+			break	
+		if x == 19:
+			c19 = char
+		if x == 18:
+			c18 = char
+		if x == 17:
+			c17 = char
+		if x == 16:
+			c16 = char
+		if x == 15:
+			c15 = char
+		if x == 14:
+			c14 = char
+		if x == 13:
+			c13 = char
+		if x == 12:
+			c12 = char
+		if x == 11:
+			c11 = char
+		if x == 10:
+			c10 = char
+		if x == 9:
+			c9 = char
+		if x == 8:
+			c8 = char		
+		if x == 7:
+			c7 = char
+		if x == 6:
+			c6 = char
+		if x == 5:
+			c5 = char
+		if x == 4:
+			c4 = char		
+		if x == 3:
+			c3 = char
+		if x == 2:
+			c2 = char
+		if x == 1:
+			c1 = char
+		if x == 0:
+			c0 = char
+		x = x + 1
+
+	# FLOW CONTROL CHARS
+	x = 0
+	y = 0
+	z = 0
+	e = 0
+
+	output = ""
+
+	## EXTRACT FIELD
+	for char in alert:
+		#print str(x) + " " + char
+		if x == size:
+			e = 1
+			if char == ec:
+				break
+			else:
+				output = output + char
+
+		if e == 0:
+			if x == 19:
+				if z != y-1:
+					x = 0
+				if char == c19:
+					x = 20
+					z = y
+				else:
+					x = 0
+			if x == 18:
+				if z != y-1:
+					x = 0
+				if char == c18:
+					x = 19
+					z = y
+				else:
+					x = 0
+			if x == 17:
+				if z != y-1:
+					x = 0
+				if char == c17:
+					x = 18
+					z = y
+				else:
+					x = 0
+			if x == 16:
+				if z != y-1:
+					x = 0
+				if char == c16:
+					x = 17
+					z = y
+				else:
+					x = 0
+			if x == 15:
+				if z != y-1:
+					x = 0
+				if char == c15:
+					x = 16
+					z = y
+				else:
+					x = 0
+			if x == 14:
+				if z != y-1:
+					x = 0
+				if char == c14:
+					x = 15
+					z = y
+				else:
+					x = 0
+			if x == 13:
+				if z != y-1:
+					x = 0
+				if char == c13:
+					x = 14
+					z = y
+				else:
+					x = 0
+			if x == 12:
+				if z != y-1:
+					x = 0
+				if char == c12:
+					x = 13
+					z = y
+				else:
+					x = 0
+			if x == 11:
+				if z != y-1:
+					x = 0
+				if char == c11:
+					x = 12
+					z = y
+				else:
+					x = 0
+			if x == 10:
+				if z != y-1:
+					x = 0
+				if char == c10:
+					x = 11
+					z = y
+				else:
+					x = 0
+			if x == 9:
+				if z != y-1:
+					x = 0
+				if char == c9:
+					x = 10
+					z = y
+				else:
+					x = 0
+			if x == 8:
+				if z != y-1:
+					x = 0
+				if char == c8:
+					x = 9
+					z = y
+				else:
+					x = 0		
+			if x == 7:
+				if z != y-1:
+					x = 0
+				if char == c7:
+					x = 8
+					z = y
+				else:
+					x = 0
+			if x == 6:
+				if z != y-1:
+					x = 0
+				if char == c6:
+					x = 7
+					z = y
+				else:
+					x = 0
+			if x == 5:
+				if z != y-1:
+					x = 0
+				if char == c5:
+					x = 6
+					z = y
+				else:
+					x = 0
+			if x == 4:
+				if z != y-1:
+					x = 0
+				if char == c4:
+					x = 5
+					z = y
+				else:
+					x = 0
+			if x == 3:
+				if z != y-1:
+					x = 0
+				if char == c3:
+					x = 4
+					z = y
+				else:
+					x = 0
+			if x == 2:
+				if z != y-1:
+					x = 0
+				if char == c2:
+					x = 3
+					z = y
+				else:
+					x = 0
+			if x == 1:
+				if z != y-1:
+					x = 0
+				if char == c1:
+					x = 2
+					z = y
+				else:
+					x = 0
+			if x == 0:
+				if char == c0:
+					x = 1
+					z = y
+			y = y + 1
+
+	return output
+
+######################################################################################################
 # Virustotal Function:
 ######################################################################################################
 
-def vt(ip):
+def vtip(ip):
+	outbuf = []
 	try:
-		virus = False
-		virusresults = requests.get('https://www.virustotal.com/vtapi/v2/ip-address/report?apikey=' + VIRUSTOTALKEY + '&ip=' + ip)
-		binaryv = virusresults.content
-		binoutv = json.loads(binaryv)
-		if 'IP address found' in binoutv:
-			virusmsg = binout['verbose_msg']
-			virus = True
-		else:
-			virusmsg = 'N/A'
-		if virus == True:
-			print bcolors.FAIL,'* *Virustotal:* +Found!+',bcolors.ENDC
-			print bcolors.FAIL,'\n* Message: ' + virusmsg,bcolors.ENDC
-			print bcolors.FAIL,'** Link: https://www.virustotal.com/' + ip,bcolors.ENDC
-			print bcolors.OKBLUE,'\n----',bcolors.ENDC
-		else:
+		# Send the request for given IP:
+		params = {'apikey': VIRUSTOTALKEY, 'ip': ip}
+		vtip_results = requests.get('https://www.virustotal.com/vtapi/v2/ip-address/report', params=params)
+		json_response = vtip_results.json()
+
+		# Determine if it exists on VT:
+		r_code = "'response_code': ,"
+		response = rex(r_code,str(json_response))
+		if response == '0':
 			print bcolors.OKGREEN,'* *Virustotal:* No Results.',bcolors.ENDC
-			print bcolors.OKBLUE,'\n----',bcolors.ENDC
-	except requests.ConnectionError:
-		print bcolors.FAIL,'\n[!] Could not connect to: https://www.virustotal.com!\n',bcolors.ENDC
-
-######################################################################################################
-# Feodo Tracker Function:
-######################################################################################################
-
-def feodoro(ip):
-	try:
-		feodo = False
-		feodoresults = requests.get('https://feodotracker.abuse.ch')
-		if ip in feodoresults.content:
-			pass
-		elif ip in feodoresults.content:
-			feodo = True
-		if feodo == True:
-			print bcolors.FAIL,'* *Feodo Botnet Tracker:* +Found!+',bcolors.ENDC
-			print bcolors.FAIL,'** Link: https://feodotracker.abuse.ch',bcolors.ENDC
 		else:
-			print bcolors.OKGREEN,'* *Feodo Botnet Tracker:* No Results.',bcolors.ENDC
+			pass
+
+		# Grab the specific JSON fields:
+		positivechars = "'positives': ,"
+		scanchars = "scan_date': u''"
+		totalchars = "'total': ,"
+
+		# Parse the JSON fields:
+		scan_date = rex(scanchars,str(json_response))
+		positives = rex(positivechars,str(json_response))
+		total = rex(totalchars,str(json_response))
+
+		# Print out the virustotal outputs:
+		print bcolors.FAIL,'* *Virustotal:* +Found!+',bcolors.ENDC
+		print bcolors.FAIL,'** Positives: '+positives+'/'+total,bcolors.ENDC
+		print bcolors.FAIL,'** Scan Date: '+scan_date,bcolors.ENDC
+		print bcolors.FAIL,'** Virustotal URL: https://www.virustotal.com/#/ip-address/'+ip+'\n'
 	except requests.ConnectionError:
-		print bcolors.FAIL,'\n[!] Could not connect to: https://feodotracker.abuse.ch!\n',bcolors.ENDC
+		print '[!] Could not connect to Virustotal API!'
 
 ######################################################################################################
 # Threatcrowd Function:
@@ -244,8 +502,7 @@ def main():
 	ransomware(ip)
 	cymonio(ip)
 	threatcrowds(ip)
-	feodoro(ip)
-	vt(ip)
+	vtip(ip)
 
 ######################################################################################################
 # Start:
