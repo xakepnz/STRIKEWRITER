@@ -1,520 +1,167 @@
 #!/usr/bin/python
 
-import argparse, re, requests, socket, time, json, pprint
+#################################################################################
+# Import some libraries and modules:
+#################################################################################
+
+import argparse, sys, re, requests, json
 from netaddr import IPNetwork, IPAddress
 
-######################################################################################################
-# API Keys: (Edit only the keys below).
-######################################################################################################
+#################################################################################
+# EDIT the below three lines for your personal API keys:
+#################################################################################
 
 ABUSEIPDBKEY = ''
 VIRUSTOTALKEY = ''
 IPINFOKEY = ''
 
-######################################################################################################
-# Custom Parser:
-######################################################################################################
-
-def rex(chars, alert):
-
-	## CHARS
-
-	c0 = ""
-	c1 = ""
-	c2 = ""
-	c3 = ""
-	c4 = ""
-	c5 = ""
-	c6 = ""
-	c7 = ""
-	c8 = ""
-	c9 = ""
-	c10 = ""
-	c11 = ""
-	c12 = ""
-	c13 = ""
-	c14 = ""
-	c15 = ""
-	c16 = ""
-	c17 = ""
-	c18 = ""
-	c19 = ""
-	ec = ""
-
-	## CHECK SIZE
-
-	size = len(chars) - 1
-	if size >21:
-		print "Error 101 - Char overflow in parse buffer - exiting"
-		sys.exit()
-
-
-	## POPULATE CHARS	
-	x = 0
-
-	for char in chars:
-		if x == size:
-			ec = char
-			break	
-		if x == 19:
-			c19 = char
-		if x == 18:
-			c18 = char
-		if x == 17:
-			c17 = char
-		if x == 16:
-			c16 = char
-		if x == 15:
-			c15 = char
-		if x == 14:
-			c14 = char
-		if x == 13:
-			c13 = char
-		if x == 12:
-			c12 = char
-		if x == 11:
-			c11 = char
-		if x == 10:
-			c10 = char
-		if x == 9:
-			c9 = char
-		if x == 8:
-			c8 = char		
-		if x == 7:
-			c7 = char
-		if x == 6:
-			c6 = char
-		if x == 5:
-			c5 = char
-		if x == 4:
-			c4 = char		
-		if x == 3:
-			c3 = char
-		if x == 2:
-			c2 = char
-		if x == 1:
-			c1 = char
-		if x == 0:
-			c0 = char
-		x = x + 1
-
-	# FLOW CONTROL CHARS
-	x = 0
-	y = 0
-	z = 0
-	e = 0
-
-	output = ""
-
-	## EXTRACT FIELD
-	for char in alert:
-		#print str(x) + " " + char
-		if x == size:
-			e = 1
-			if char == ec:
-				break
-			else:
-				output = output + char
-
-		if e == 0:
-			if x == 19:
-				if z != y-1:
-					x = 0
-				if char == c19:
-					x = 20
-					z = y
-				else:
-					x = 0
-			if x == 18:
-				if z != y-1:
-					x = 0
-				if char == c18:
-					x = 19
-					z = y
-				else:
-					x = 0
-			if x == 17:
-				if z != y-1:
-					x = 0
-				if char == c17:
-					x = 18
-					z = y
-				else:
-					x = 0
-			if x == 16:
-				if z != y-1:
-					x = 0
-				if char == c16:
-					x = 17
-					z = y
-				else:
-					x = 0
-			if x == 15:
-				if z != y-1:
-					x = 0
-				if char == c15:
-					x = 16
-					z = y
-				else:
-					x = 0
-			if x == 14:
-				if z != y-1:
-					x = 0
-				if char == c14:
-					x = 15
-					z = y
-				else:
-					x = 0
-			if x == 13:
-				if z != y-1:
-					x = 0
-				if char == c13:
-					x = 14
-					z = y
-				else:
-					x = 0
-			if x == 12:
-				if z != y-1:
-					x = 0
-				if char == c12:
-					x = 13
-					z = y
-				else:
-					x = 0
-			if x == 11:
-				if z != y-1:
-					x = 0
-				if char == c11:
-					x = 12
-					z = y
-				else:
-					x = 0
-			if x == 10:
-				if z != y-1:
-					x = 0
-				if char == c10:
-					x = 11
-					z = y
-				else:
-					x = 0
-			if x == 9:
-				if z != y-1:
-					x = 0
-				if char == c9:
-					x = 10
-					z = y
-				else:
-					x = 0
-			if x == 8:
-				if z != y-1:
-					x = 0
-				if char == c8:
-					x = 9
-					z = y
-				else:
-					x = 0		
-			if x == 7:
-				if z != y-1:
-					x = 0
-				if char == c7:
-					x = 8
-					z = y
-				else:
-					x = 0
-			if x == 6:
-				if z != y-1:
-					x = 0
-				if char == c6:
-					x = 7
-					z = y
-				else:
-					x = 0
-			if x == 5:
-				if z != y-1:
-					x = 0
-				if char == c5:
-					x = 6
-					z = y
-				else:
-					x = 0
-			if x == 4:
-				if z != y-1:
-					x = 0
-				if char == c4:
-					x = 5
-					z = y
-				else:
-					x = 0
-			if x == 3:
-				if z != y-1:
-					x = 0
-				if char == c3:
-					x = 4
-					z = y
-				else:
-					x = 0
-			if x == 2:
-				if z != y-1:
-					x = 0
-				if char == c2:
-					x = 3
-					z = y
-				else:
-					x = 0
-			if x == 1:
-				if z != y-1:
-					x = 0
-				if char == c1:
-					x = 2
-					z = y
-				else:
-					x = 0
-			if x == 0:
-				if char == c0:
-					x = 1
-					z = y
-			y = y + 1
-
-	return output
-
-######################################################################################################
-# Virustotal Function:
-######################################################################################################
-
-def vtip(ip):
-	outbuf = []
-	try:
-		# Send the request for given IP:
-		params = {'apikey': VIRUSTOTALKEY, 'ip': ip}
-		vtip_results = requests.get('https://www.virustotal.com/vtapi/v2/ip-address/report', params=params)
-		json_response = vtip_results.json()
-
-		# Determine if it exists on VT:
-		r_code = "'response_code': ,"
-		response = rex(r_code,str(json_response))
-		if response == '0':
-			print bcolors.OKGREEN,'* *Virustotal:* No Results.',bcolors.ENDC
-		else:
-			pass
-
-		# Grab the specific JSON fields:
-		positivechars = "'positives': ,"
-		scanchars = "scan_date': u''"
-		totalchars = "'total': ,"
-
-		# Parse the JSON fields:
-		scan_date = rex(scanchars,str(json_response))
-		positives = rex(positivechars,str(json_response))
-		total = rex(totalchars,str(json_response))
-
-		# Print out the virustotal outputs:
-		print bcolors.FAIL,'* *Virustotal:* +Found!+',bcolors.ENDC
-		print bcolors.FAIL,'** Positives: '+positives+'/'+total,bcolors.ENDC
-		print bcolors.FAIL,'** Scan Date: '+scan_date,bcolors.ENDC
-		print bcolors.FAIL,'** Virustotal URL: https://www.virustotal.com/#/ip-address/'+ip+'\n'
-	except requests.ConnectionError:
-		print '[!] Could not connect to Virustotal API!'
-
-######################################################################################################
-# Threatcrowd Function:
-######################################################################################################
-
-def threatcrowds(ip):
-	try:
-		threat = False
-		threatcresults = requests.get("http://www.threatcrowd.org/searchApi/v2/ip/report/", params = {"ip": ip})
-		binaryt = threatcresults.content
-		binoutt = json.loads(binaryt)
-		response_code = binoutt['response_code']
-		if response_code == '1':
-			url = binoutt['permalink']
-			threat = True
-		else:
-			pass
-		if threat == True:
-			print bcolors.FAIL,'* *Threatcrowd:* +Found!+',bcolors.ENDC
-			print bcolors.FAIL,'** Link: ' + url,bcolors.ENDC
-		else:
-			print bcolors.OKGREEN,'* *Threatcrowd:* No Results.',bcolors.ENDC
-	except requests.ConnectionError:
-		print bcolors.FAIL,'\n[!] Could not connect to: https://www.threatcrowd.org!\n',bcolors.ENDC
-
-######################################################################################################
-# Cymon Function:
-######################################################################################################
-
-def cymonio(ip):
-	try:
-		cymon = False
-		cymonresults = requests.get('https://cymon.io/' + ip)
-		if 'IP Not Found' in cymonresults.content:
-			pass
-		elif 'reported!' in cymonresults.content:
-			cymon = True
-		if cymon == True:
-			print bcolors.FAIL,'* *Cymon:* +Found!+',bcolors.ENDC
-			print bcolors.FAIL,'** Link: https://cymon.io/' + ip,bcolors.ENDC
-		else:
-			print bcolors.OKGREEN,'* *Cymon:* No Results.',bcolors.ENDC
-	except requests.ConnectionError:
-		print bcolors.FAIL,'\n[!] Could not connect to: https://cymon.io!\n',bcolors.ENDC
-
-######################################################################################################
-# Ransomeware Tracker Function:
-######################################################################################################
-
-def ransomware(ip):
-	try:
-		ransom = False
-		ransomresults = requests.get('https://ransomwaretracker.abuse.ch/ip/' + ip)
-		if 'not found in the Ransomware Tracker' in ransomresults.content:
-			pass
-		elif 'table below shows all Ransomware' in ransomresults.content:
-			ransom = True
-		if ransom == True:
-			print bcolors.FAIL,'* *Ransomware Tracker:* +Found!+',bcolors.ENDC
-			print bcolors.FAIL,'** Link: https://ransomwaretracker.abuse.ch/ip/' + ip,bcolors.ENDC
-		else:
-			print bcolors.OKGREEN,'* *Ransomware Tracker:* No Results.',bcolors.ENDC
-	except requests.ConnectionError:
-		print bcolors.FAIL,'\n[!] Could not connect to: https://ransomwaretracker.abuse.ch!\n',bcolors.ENDC
-
-######################################################################################################
-# AbuseIPDB Function:
-######################################################################################################
-
-def abuseip(ip):
-	try:
-		abuse = False
-		abuseresults = requests.get('https://www.abuseipdb.com/check/' + ip + '/json?key=' + ABUSEIPDBKEY + '&days=30')
-		if abuseresults.content == ("[]"):
-			pass
-		else:
-			abuse = True
-		print bcolors.OKBLUE,'\n----',bcolors.ENDC
-		print bcolors.OKBLUE,'\n*Threat Information:*\n',bcolors.ENDC
-		if abuse == True:
-			print bcolors.FAIL,'* *AbuseIPDB:* +Found!+',bcolors.ENDC
-			print bcolors.FAIL,'** Link: https://abuseipdb.com/check/' + ip,bcolors.ENDC
-		else:
-			print bcolors.OKGREEN,'* *AbuseIPDB:* No Results.',bcolors.ENDC
-	except requests.ConnectionError:
-		print bcolors.FAIL,'\n[!] Could not connect to: https://abuseipdb.com! (FYI: OSX Fails to connect). *mumbles* OpenSSL...\n',bcolors.ENDC
-
-######################################################################################################
-# IP Lookup function:
-######################################################################################################
-
-def iplookup(ip):
-	try:
-		r = requests.get('https://ipinfo.io/' + ip + '?token=' + IPINFOKEY)
-		binary = r.content
-		binout = json.loads(binary)
-		if 'hostname' in binout:
-			hostname = binout['hostname']
-		else:
-			hostname = 'N/A'
-		if 'org' in binout:
-			org = binout['org']
-		else:
-			org = 'N/A'
-		country = binout['country']
-		print bcolors.OKBLUE,'\n*IP Information:*\n',bcolors.ENDC
-		print '* *IP:* ' + ip
-		print '* *Hostname:* ' + hostname
-		print '* *Provider:* ' + org
-		print '* *Country:* ' + country
-	except requests.ConnectionError:
-		print bcolors.FAIL,'[!] Could not connect to: https://ipinfo.io!',bcolors.ENDC
-
-######################################################################################################
-# Menu function:
-######################################################################################################
-
-def menu():
-	print bcolors.OKGREEN,'\n   /######  /######## /#######  /###### /##   /## /########',bcolors.ENDC
-	print bcolors.OKGREEN,'  /##__  ##|__  ##__/| ##__  ##|_  ##_/| ##  /##/| ##_____/',bcolors.ENDC
-	print bcolors.OKGREEN,' | ##  \__/   | ##   | ##  \ ##  | ##  | ## /##/ | ##      ',bcolors.ENDC
-	print bcolors.OKGREEN,' |  ######    | ##   | #######/  | ##  | #####/  | #####   ',bcolors.ENDC
-	print bcolors.OKGREEN,'  \____  ##   | ##   | ##__  ##  | ##  | ##  ##  | ##__/   ',bcolors.ENDC
-	print bcolors.OKGREEN,'  /##  \ ##   | ##   | ##  \ ##  | ##  | ##\  ## | ##      ',bcolors.ENDC
-	print bcolors.OKGREEN,' |  ######/   | ##   | ##  | ## /######| ## \  ##| ########',bcolors.ENDC
-	print bcolors.OKGREEN,'  \______/    |__/   |__/  |__/|______/|__/  \__/|________/\n',bcolors.ENDC
-	print bcolors.OKGREEN,'  /##      /## /#######  /###### /######## /######## /#######',bcolors.ENDC
-	print bcolors.OKGREEN,' | ##  /# | ##| ##__  ##|_  ##_/|__  ##__/| ##_____/| ##__  ##',bcolors.ENDC
-	print bcolors.OKGREEN,' | ## /###| ##| ##  \ ##  | ##     | ##   | ##      | ##  \ ##',bcolors.ENDC
-	print bcolors.OKGREEN,' | ##/## ## ##| #######/  | ##     | ##   | #####   | #######/',bcolors.ENDC
-	print bcolors.OKGREEN,' | ####_  ####| ##__  ##  | ##     | ##   | ##__/   | ##__  ##',bcolors.ENDC
-	print bcolors.OKGREEN,' | ###/ \  ###| ##  \ ##  | ##     | ##   | ##      | ##  \ ##',bcolors.ENDC
-	print bcolors.OKGREEN,' | ##/   \  ##| ##  | ## /######   | ##   | ########| ##  | ##',bcolors.ENDC
-	print bcolors.OKGREEN,' |__/     \__/|__/  |__/|______/   |__/   |________/|__/  |__/\n',bcolors.ENDC
-	print bcolors.OKBLUE,'        Link: https://github.com/xakepnz/STRIKEWRITER',bcolors.ENDC
-	print bcolors.OKGREEN,' -------------------------------------------------------------',bcolors.ENDC
-
-######################################################################################################
-# Main Function:
-######################################################################################################
+#################################################################################
+# Main code:
+#################################################################################
 
 def main():
-        if ABUSEIPDBKEY == '' and VIRUSTOTALKEY == '' and IPINFOKEY == '':
-          print bcolors.FAIL,'[!] Error: No API Keys added.',bcolors.ENDC
-          exit (0)
+    # Check the user entered in their API Keys above:
+    if ABUSEIPDBKEY == '':
+        print '\n[!] Error: Ensure all API Keys are added!\n'
+        sys.exit(0)
+        
+    elif VIRUSTOTALKEY == '' or IPINFOKEY == '':
+        print '\n[!] Error: Ensure all API Keys are added.\n'
+        sys.exit (0)
+        
+    else:
+        # Parser for the -i argument for IP input from the user:
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-i","--ip", help="Input IPV4 Address.",required=True)
+        args = parser.parse_args()
+        
+        # Store the input as a variable:
+        ip = args.ip
+        
+        # See if it's an IP address or a random input:
+        if re.match(r'^((\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$', ip):
+            pass
         else:
-          pass
-	parser = argparse.ArgumentParser()
-	parser.add_argument("-i","--ip", help="Input IPV4 Address.",required=True)
-	parser.add_argument("-v","--verbose", help="Verbose Output.",required=False, action="store_true")
-	args = parser.parse_args()
-	ip = args.ip
-	verb = args.verbose
-	menu()
+            print '\n[!] Error: Unknown Character Detected!\n'
+            sys.exit (0)
+            
+        # Determine if it's a private IP address: 
+        if IPAddress(ip) in IPNetwork('192.168.0.0/16'):
+            print '\n[!] Error: Private IP Detected!\n'
+            sys.exit (0)
+        elif IPAddress(ip) in IPNetwork('10.0.0.0/8') or IPAddress(ip) in IPNetwork('127.0.0.0/8') or IPAddress(ip) in IPNetwork('172.16.0.0/12'):
+            print '\n[!] Error: Private IP Detected!\n'
+            sys.exit (0)
 
-######################################################################################################
-# Error Checking:
-######################################################################################################
+#################################################################################
+# IPInfo Check:
+#################################################################################
 
-	if re.match(r'^((\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$', ip):
-		pass
-	else:
-		print bcolors.FAIL,'\n[!] Error: Unknown Character Detected!\n',bcolors.ENDC
-		exit (0)
-	if IPAddress(ip) in IPNetwork('192.168.0.0/16'):
-		print bcolors.FAIL,'\n[!] Error: Private IP Detected!\n',bcolors.ENDC
-		exit (0)
-	elif IPAddress(ip) in IPNetwork('10.0.0.0/8'):
-		print bcolors.FAIL,'\n[!] Error: Private IP Detected!\n',bcolors.ENDC
-		exit (0)
-	elif IPAddress(ip) in IPNetwork('127.0.0.0/8'):
-		print bcolors.FAIL,'\n[!] Error: Private IP Detected!\n',bcolors.ENDC
-		exit (0)
-	elif IPAddress(ip) in IPNetwork('172.16.0.0/12'):
-		print bcolors.FAIL,'\n[!] Error: Private IP Detected!\n',bcolors.ENDC
-		exit (0)
-	else:
-		pass
+        ipInfoRequest = requests.get('https://ipinfo.io/' + ip + '?token=' + IPINFOKEY)
+        ipInfoResults = json.loads(ipInfoRequest.content)
+        
+        if 'hostname' in ipInfoResults:
+            hostname = ipInfoResults['hostname']
+        else: hostname = 'N/A'
+        if 'org' in ipInfoResults:
+            provider = ipInfoResults['org']
+        else:
+            provider = 'N/A'
+        if 'city' in ipInfoResults:
+            city = ipInfoResults['city']
+        else:
+            city = 'N/A'
+        if 'region' in ipInfoResults:
+            region = ipInfoResults['region']
+        else:
+            region = 'N/A'
+        if 'country' in ipInfoResults:
+            country = ipInfoResults['country']
+        else:
+            country = 'N/A'
+        
+        print '\n*IP Information:*'
+        print '* *IP:*', ip
+        print '* *Hostname:*', hostname
+        print '* *Provider:*', provider
+        print '* *City:*', city
+        print '* *Region:*', region
+        print '* *Country:*', country
+        
+        print '\n-----'
+        print '*Blacklist Information:*'
+        
+#################################################################################
+# Blacklist lookup:
+#################################################################################
 
-######################################################################################################
-# Call some functions:
-######################################################################################################
-
-	iplookup(ip)
-	abuseip(ip)
-	ransomware(ip)
-	cymonio(ip)
-	threatcrowds(ip)
-	vtip(ip)
-
-######################################################################################################
-# Start:
-######################################################################################################
-
+        # AbuseIPDB Check:
+        try:
+            abuseRequest = requests.get('https://www.abuseipdb.com/check/' + ip + '/json?key=' + ABUSEIPDBKEY + '&days=30')
+            abuseResults = abuseRequest.content
+            
+            if abuseResults == '[]' and abuseRequest.status_code == 200:
+                print '* *AbuseIPDB:* No results'
+            elif abuseResults != '[]' and abuseRequest.status_code == 200:
+                print '* *AbuseIPDB:* +Found!+'
+                print '** Link: https://www.abuseipdb.com/check/' + ip
+        except requests.ConnectionError:
+            print '\n[!] Error: Could not connect to AbuseIPDB\n'
+        
+        # Threatcrowd Check:
+        try:
+            threat = False
+            threatRequest = requests.get('http://www.threatcrowd.org/searchApi/v2/ip/report/', params = {'ip': ip})
+            threatResults = json.loads(threatRequest.content)
+            response_code = threatResults['response_code']
+            
+            if response_code == '1':
+                threatURL = threatResults['permalink']
+                threat = True
+                
+            if threat == True:
+                print '* *Threatcrowd:* +Found!+'
+                print '** *Link:*', threatURL
+            else:
+                print '* *Threatcrowd:* No results'   
+        except requests.ConnectionError:
+            print '\n[!] Error: Could not connect to ThreatCrowd\n'
+        
+        # Ransomware IP check:
+        try:
+            ransom = False
+            ransomRequest = requests.get('https://ransomwaretracker.abuse.ch/ip/' + ip)
+            
+            if 'not found in Ransomware Tracker' in ransomRequest.content:
+                pass
+            elif 'table below shows all Ransomware' in ransomRequest.content:
+                ransom = True
+            
+            if ransom == True:
+                print '* *Ransomware Tracker:* +Found!+'
+                print '** Link: https://ransomwaretracker.abuse.ch/ip/' + ip
+            else:
+                print '* *Ransomware Tracker:* No results'
+        except requests.ConnectionError:
+            print '[!] Error: Could not connect to Ransomware Tracker\n'
+            
+        # Virustotal Check:
+        try:
+            params = {'apikey': VIRUSTOTALKEY, 'ip': ip}
+            vtip_results = requests.get('https://www.virustotal.com/vtapi/v2/ip-address/report', params=params)
+            json_response = vtip_results.json()
+            
+            vt_code = json_response['response_code']
+            if vt_code == 0:
+                print '* *Virustotal:* No results'
+                print '\n-----'
+            elif vt_code == 1:
+                print '* *Virustotal:* +Found!+'
+                print '** *Link: https://www.virustotal.com/#/ip-address/' + ip
+                print '-----\n'
+            
+        except requests.ConnectionError:
+            print '[!] Error: Could not connect to Virustotal\n'
+    
 if __name__ == "__main__":
-	class bcolors:
-		OKBLUE = '\033[94m'
-		OKGREEN = '\033[92m'
-		WARNING = '\033[93m'
-		FAIL = '\033[91m'
-		ENDC = '\033[0m'
-		BOLD = '\033[1m'
-
-	main()
+    main()
