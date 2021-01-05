@@ -1,14 +1,18 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# Author: xakepnz
+# Description: Simple Python script to return OSINT on a given IPV4 address.
+#################################################################################
+# Imports:
+#################################################################################
+
+import requests
+import json
+import logging
+import ipaddress
+import argparse
 
 #################################################################################
-# Import some libraries and modules:
-#################################################################################
-
-import argparse, sys, re, requests, json
-from netaddr import IPNetwork, IPAddress
-
-#################################################################################
-# EDIT the below three lines for your personal API keys:
+# API Keys:
 #################################################################################
 
 ABUSEIPDBKEY = ''
@@ -16,152 +20,299 @@ VIRUSTOTALKEY = ''
 IPINFOKEY = ''
 
 #################################################################################
-# Main code:
+# IPInfo:
 #################################################################################
 
-def main():
-    # Check the user entered in their API Keys above:
-    if ABUSEIPDBKEY == '':
-        print '\n[!] Error: Ensure all API Keys are added!\n'
-        sys.exit(0)
+def ipinfo(target, api_key):
+    """
+    Takes:
+        target   - IPV4 string of IP to check against.
+        api_key  - IPInfo API Key string.
         
-    elif VIRUSTOTALKEY == '' or IPINFOKEY == '':
-        print '\n[!] Error: Ensure all API Keys are added.\n'
-        sys.exit (0)
-        
-    else:
-        # Parser for the -i argument for IP input from the user:
-        parser = argparse.ArgumentParser()
-        parser.add_argument("-i","--ip", help="Input IPV4 Address.",required=True)
-        args = parser.parse_args()
-        
-        # Store the input as a variable:
-        ip = args.ip
-        
-        # See if it's an IP address or a random input:
-        if re.match(r'^((\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$', ip):
-            pass
-        else:
-            print '\n[!] Error: Unknown Character Detected!\n'
-            sys.exit (0)
-            
-        # Determine if it's a private IP address: 
-        if IPAddress(ip) in IPNetwork('192.168.0.0/16'):
-            print '\n[!] Error: Private IP Detected!\n'
-            sys.exit (0)
-        elif IPAddress(ip) in IPNetwork('10.0.0.0/8') or IPAddress(ip) in IPNetwork('127.0.0.0/8') or IPAddress(ip) in IPNetwork('172.16.0.0/12'):
-            print '\n[!] Error: Private IP Detected!\n'
-            sys.exit (0)
-
-#################################################################################
-# IPInfo Check:
-#################################################################################
-
-        ipInfoRequest = requests.get('https://ipinfo.io/' + ip + '?token=' + IPINFOKEY)
-        ipInfoResults = json.loads(ipInfoRequest.content)
-        
-        if 'hostname' in ipInfoResults:
-            hostname = ipInfoResults['hostname']
-        else: hostname = 'N/A'
-        if 'org' in ipInfoResults:
-            provider = ipInfoResults['org']
-        else:
-            provider = 'N/A'
-        if 'city' in ipInfoResults:
-            city = ipInfoResults['city']
-        else:
-            city = 'N/A'
-        if 'region' in ipInfoResults:
-            region = ipInfoResults['region']
-        else:
-            region = 'N/A'
-        if 'country' in ipInfoResults:
-            country = ipInfoResults['country']
-        else:
-            country = 'N/A'
-        
-        print '\n*IP Information:*'
-        print '* *IP:*', ip
-        print '* *Hostname:*', hostname
-        print '* *Provider:*', provider
-        print '* *City:*', city
-        print '* *Region:*', region
-        print '* *Country:*', country
-        
-        print '\n-----'
-        print '*Blacklist Information:*'
-        
-#################################################################################
-# Blacklist lookup:
-#################################################################################
-
-        # AbuseIPDB Check:
-        try:
-            abuseRequest = requests.get('https://www.abuseipdb.com/check/' + ip + '/json?key=' + ABUSEIPDBKEY + '&days=30')
-            abuseResults = abuseRequest.content
-            
-            if abuseResults == '[]' and abuseRequest.status_code == 200:
-                print '* *AbuseIPDB:* No results'
-            elif abuseResults != '[]' and abuseRequest.status_code == 200:
-                print '* *AbuseIPDB:* +Found!+'
-                print '** Link: https://www.abuseipdb.com/check/' + ip
-        except requests.ConnectionError:
-            print '\n[!] Error: Could not connect to AbuseIPDB\n'
-        
-        # Threatcrowd Check:
-        try:
-            threat = False
-            threatRequest = requests.get('http://www.threatcrowd.org/searchApi/v2/ip/report/', params = {'ip': ip})
-            threatResults = json.loads(threatRequest.content)
-            response_code = threatResults['response_code']
-            
-            if response_code == '1':
-                threatURL = threatResults['permalink']
-                threat = True
-                
-            if threat == True:
-                print '* *Threatcrowd:* +Found!+'
-                print '** *Link:*', threatURL
-            else:
-                print '* *Threatcrowd:* No results'   
-        except requests.ConnectionError:
-            print '\n[!] Error: Could not connect to ThreatCrowd\n'
-        
-        # Ransomware IP check:
-        try:
-            ransom = False
-            ransomRequest = requests.get('https://ransomwaretracker.abuse.ch/ip/' + ip)
-            
-            if 'not found in Ransomware Tracker' in ransomRequest.content:
-                pass
-            elif 'table below shows all Ransomware' in ransomRequest.content:
-                ransom = True
-            
-            if ransom == True:
-                print '* *Ransomware Tracker:* +Found!+'
-                print '** Link: https://ransomwaretracker.abuse.ch/ip/' + ip
-            else:
-                print '* *Ransomware Tracker:* No results'
-        except requests.ConnectionError:
-            print '[!] Error: Could not connect to Ransomware Tracker\n'
-            
-        # Virustotal Check:
-        try:
-            params = {'apikey': VIRUSTOTALKEY, 'ip': ip}
-            vtip_results = requests.get('https://www.virustotal.com/vtapi/v2/ip-address/report', params=params)
-            json_response = vtip_results.json()
-            
-            vt_code = json_response['response_code']
-            if vt_code == 0:
-                print '* *Virustotal:* No results'
-                print '\n-----'
-            elif vt_code == 1:
-                print '* *Virustotal:* +Found!+'
-                print '** *Link: https://www.virustotal.com/#/ip-address/' + ip
-                print '-----\n'
-            
-        except requests.ConnectionError:
-            print '[!] Error: Could not connect to Virustotal\n'
+    Returns:
+        hostname - The FQDN record of the given IP.
+        org      - ASN Record of the given IP.
+        region   - Geolocation Region of the given IP.
+        country  - Geolocation Country Code of the given IP.
+    """
     
+    logging.info('Making request to IPInfo...')
+    
+    r = requests.get(
+        'https://ipinfo.io/{}'.format(target),
+        headers = {
+            'Authorization': 'Bearer {}'.format(api_key),
+            'Accept': 'application/json'
+        }
+    )
+    
+    if r.ok:
+        logging.info('Connected to IPInfo...')
+        try:
+            response = r.json()
+            return response.get('hostname'), response.get('org'), response.get('region'), response.get('country')
+        except Exception as e:
+            logging.error('Failed to JSONify the return data... Response Code: {}\nResponse: {}\nError: {}'.format(r.status_code, r.text, e))
+            exit(0)
+    else:
+        logging.error('Failed to make request to IPInfo API. Return code: {}'.format(r.status_code))
+        exit(0)
+
+#################################################################################
+# AbuseIPDB:
+#################################################################################
+
+def abuseipdb(target, api_key):
+    """
+    Takes:
+        target     - IPV4 string of IP to check against.
+        api_key    - AbuseIPDB API Key string.
+        
+    Returns:
+        True/False - Boolean to say whether a record exists or not for given IP.
+    """
+    
+    logging.info('Making request to AbuseIPDB...')
+    
+    r = requests.get(
+        'https://api.abuseipdb.com/api/v2/check',
+        headers = {
+            'Key': api_key,
+            'Accept':'application/json'
+        },
+        params = {
+            'ipAddress': target,
+            'maxAgeInDays': '30'
+        }
+    )
+    
+    if r.ok:
+        logging.info('Connected to AbuseIPDB...')
+        try:
+            response = r.json()
+            try:
+                data = response.get('data')
+                reports = data.get('totalReports')
+            except Exception as e:
+                logging.error('Failed to find correct data inside response...Response: {}'.format(response))
+                exit(0)
+            if reports > 0:
+                return True
+            else:
+                return False
+        except Exception as e:
+            logging.error('Failed to JSONify the return data... Response Code: {}\nResponse: {}\nError: {}'.format(r.status_code, r.text, e))
+            exit(0)
+    else:
+        logging.error('Failed to make request to AbuseIPDB API. Return code: {}'.format(r.status_code))
+        exit(0)
+
+#################################################################################
+# Threatcrowd:
+#################################################################################
+
+def threatcrowd(target):
+    """
+    Takes:
+        target     - IPV4 string of IP to check against.
+        
+    Returns:
+        True/False - Boolean to say whether a record exists or not for given IP.
+    """
+    
+    logging.info('Making request to Threatcrowd...')
+    
+    r = requests.get(
+        'http://www.threatcrowd.org/searchApi/v2/ip/report/',
+        headers = {
+            'Accept': 'application/json'
+        },
+        params = {
+            'ip': target
+        }
+    )
+    
+    if r.ok:
+        logging.info('Connected to Threatcrowd...')
+        try:
+            response = r.json()
+            res = response.get('response_code')
+            if int(res) > 0:
+                return True
+            else:
+                return False
+        except Exception as e:
+            logging.error('Failed to JSONify the return data... Response Code: {}\nResponse: {}\nError: {}'.format(r.status_code, r.text, e))
+            exit(0)
+    else:
+        logging.error('Failed to make request to IPInfo API. Return code: {}'.format(r.status_code))
+        exit(0)
+
+#################################################################################
+# Virustotal:
+#################################################################################
+
+def virustotal(target, api_key):
+    """
+    Takes:
+        target     - IPV4 string of IP to check against.
+        api_key    - Virustotal API Key string.
+        
+    Returns:
+        True/False - Boolean to say whether a record exists or not for given IP.
+    """
+    
+    logging.info('Making request to Virustotal...')
+    
+    r = requests.get(
+        'https://www.virustotal.com/vtapi/v2/ip-address/report',
+        headers = {
+            'Accept': 'application/json'
+        },
+        params = {
+            'apikey': api_key,
+            'ip': target
+        }
+    )
+    
+    if r.ok:
+        logging.info('Connected to Virustotal...')
+        try:
+            response = r.json()
+            res = response.get('response_code')
+            if int(res) > 0:
+                return True
+            else:
+                return False
+        except Exception as e:
+            logging.error('Failed to JSONify the return data... Response Code: {}\nResponse: {}\nError: {}'.format(r.status_code, r.text, e))
+            exit(0)
+    else:
+        logging.error('Failed to make request to IPInfo API. Return code: {}'.format(r.status_code))
+        exit(0)
+
+#################################################################################
+# Sanity check user input:
+#################################################################################
+
+def sanity(user_input):
+    """
+    Takes:
+        user_input - Argument value provided by the user.
+    Returns:
+        True/False - Depending whether or not the input is allowed or not.
+    """
+    
+    try:
+        t_ = ipaddress.ip_address(user_input)
+        if t_.is_global:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
+    if ipaddress.ip_address(user_input).is_private():
+        return False
+
+#################################################################################
+# API Key check:
+#################################################################################
+
+def api_check(ABUSEIPDBKEY, VIRUSTOTALKEY, IPINFOKEY):
+    """
+    Takes:
+        ABUSEIPDBKEY  - AbuseIPDB API Key
+        VIRUSTOTALKEY - Virustotal API Key
+        IPINFOKEY     - IPInfo API Key
+        
+    Returns:
+        True/False    - Boolean to say if we're okay to proceed with the keys.
+    """
+    
+    if ABUSEIPDBKEY == '':
+        return False
+    elif VIRUSTOTALKEY == '' or IPINFOKEY == '':
+        return False
+    else:
+        return True
+
+#################################################################################
+# Output results:
+#################################################################################
+
+def output_results(t, hostname, asn, region, country, abuse, threat, virus):
+    """
+    Takes:
+        t        - The Target IPV4 String.
+        hostname - Hostname of Target.
+        asn      - ASN of Target.
+        region   - Region of Target.
+        country  - Country Code of Target.
+        abuse    - Boolean if found on AbuseIPDB.
+        threat   - Boolean if found on ThreatCrowd.
+        virus    - Boolean if found on Virustotal.
+    Returns:
+        STDOut Print Statements.
+    """
+    
+    print('\nTarget Info:')
+    print('- IP: {}'.format(t))
+    print('- Hostname: {}'.format(hostname))
+    print('- ASN: {}'.format(asn))
+    print('- Region: {}'.format(region))
+    print('- Country: {}'.format(country))
+
+    print('\nOSINT Results:')
+    if abuse:
+        print('- AbuseIPDB: https://www.abuseipdb.com/check/{}'.format(t))
+    if threat:
+        print('- ThreatCrowd: https://www.threatcrowd.org/ip.php?ip={}'.format(t))
+    if virus:
+        print('- Virustotal: https://www.virustotal.com/gui/ip-address/{}/detection'.format(t))
+    print('')
+
+    if not abuse and not threat and not virus:
+        print('- No results...')
+
+#################################################################################
+# Main:
+#################################################################################
+
 if __name__ == "__main__":
-    main()
+    # Set logging level:
+    logging.getLogger().setLevel(logging.INFO)
+    logging.basicConfig(
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        level=logging.INFO,
+        datefmt='%Y-%m-%d %H:%M:%S')
+    
+    # Parser for the -i argument for IP input from the user:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-i',
+        '--ip',
+        help = 'Input IPV4 Address.',
+        required = True
+    )
+    args = parser.parse_args()
+    
+    # Store the input as a variable to pass to the functions:
+    t = args.ip
+    
+    # Check we've got all the API Keys:
+    if api_check(ABUSEIPDBKEY, VIRUSTOTALKEY, IPINFOKEY):
+        # Sanitize the input from the user:
+        if sanity(t):
+            # Start OSINT checks:
+            hostname, asn, region, country = ipinfo(t,IPINFOKEY)
+            abuse = abuseipdb(t,ABUSEIPDBKEY)
+            threat = threatcrowd(t)
+            virus = virustotal(t, VIRUSTOTALKEY)
+            # Print the outputs:
+            output_results(t, hostname, asn, region, country, abuse, threat, virus)
+        else:
+            print('Bad User Input.')
+            exit(0)
+    else:
+        print('Issue with API Keys...')
+        exit(0)
