@@ -2,39 +2,23 @@
 
 ## Description:
 
-This is a simple python script that takes a public IPV4 and searches against a few blacklist websites, to determine a reputation.<br />
-
-
-![alt text](https://i.imgur.com/x739S8w.gif "Strikewriter")
-
+Get basic Geolocation/Hostname/ASN information on an IPv4 address, and search the address against free OSINT sites for a quick reputation check.<br />
 
 ## Requirements:
 
-[+] <b>_You need API Keys_</b> from: https://abuseipdb.com & https://www.virustotal.com & https://ipinfo.io<br />
+You need API Keys from: https://abuseipdb.com / https://www.virustotal.com / https://ipinfo.io<br />
 
 ## Install:
 
 ```
-$ git clone https://github.com/xakepnz/STRIKEWRITER.git
-```
-
-```
-$ cd STRIKEWRITER
-```
-
-```
-$ nano strikewriter # add in your API keys now
-```
-
-```
-$ chmod +x strikewriter
-```
-
-```
-$ sudo cp strikewriter /usr/local/bin/
+git clone https://github.com/xakepnz/STRIKEWRITER.git
+cd STRIKEWRITER
+nano strikewriter # Edit your API Keys
+chmod +x strikewriter
+cp strikewriter /usr/local/bin
 ```
 
 ## Usage:
 ```
-$ strikewriter -i 123.123.123.123
+strikewriter -i 1.1.1.1
 ```
